@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE CRIME OF BEING — Institutional Record & Academic E-Portfolio</title>
+    <!-- Tailwind CSS for utility styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        charcoal: '#121314',
+                        ink: '#1c1e20',
+                        paper: '#f5f3ef',
+                        bone: '#eae6df',
+                        'oxidized-green': '#2b4436',
+                        vermilion: '#aa382c',
+                        stamp: '#8b261d',
+                    },
+                    fontFamily: {
+                        serif: ['Georgia', 'Cambria', 'Times New Roman', 'serif'],
+                        mono: ['Courier New', 'Courier', 'monospace'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Design Tokens & Variables */
+        :root {
+            --bg-charcoal: #121314;
+            --bg-paper: #f5f3ef;
+            --bg-bone: #eae6df;
+            --text-ink: #1c1e20;
+            --accent-green: #2b4436;
+            --accent-vermilion: #aa382c;
+            --font-serif: Georgia, Cambria, 'Times New Roman', serif;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
+        /* Ambient Canvas overlay */
+        #ambient-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0.85;
+        }
+
+        /* Institutional Ledger Grid Background */
+        .ledger-bg {
+            background-color: var(--bg-paper);
+            background-image: 
+                linear-gradient(to right, rgba(18, 19, 20, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(18, 19, 20, 0.03) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Institutional Stamps */
+        .stamp-mark {
+            border: 2px solid var(--accent-vermilion);
+            color: var(--accent-vermilion);
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            padding: 0.25rem 0.75rem;
+            display: inline-block;
+            transform: rotate(-2deg);
+            box-shadow: 0 0 0 1px var(--accent-vermilion);
+            user-select: none;
+        }
+
+        /* Feather animation styling */
+        .feather-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 40;
+            font-size: 20px;
+            color: #4a5568;
+            opacity: 0.8;
+            will-change: transform, opacity;
+            animation: fallAndSway linear forwards;
+        }
+
+        @keyframes fallAndSway {
+            0% {
+                transform: translateY(-20px) rotate(0deg) translateX(0px);
+                opacity: 0.9;
+            }
+            50% {
+                transform: translateY(50vh) rotate(180deg) translateX(40px);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(105vh) rotate(360deg) translateX(-30px);
+                opacity: 0;
+            }
+        }
+
+        /* Route line styling for Nonfiction */
+        .route-node {
+            transition: all 0.3s ease;
+        }
+        .route-node:hover {
+            transform: scale(1.25);
+            background-color: var(--accent-vermilion);
+        }
+
+        /* Accessibility utilities */
+        .sr-only-focusable:focus {
+            position: static;
+            width: auto;
+            height: auto;
+            margin: 0;
+            overflow: visible;
+            clip: auto;
+            white-space: normal;
+        }
+
+        /* Code editing placeholders visual styling */
+        .editable-placeholder {
+            border: 1px dashed #aa382c;
+            background-color: rgba(170, 56, 44, 0.04);
+            padding: 0.25rem 0.5rem;
+            color: #aa382c;
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body class="ledger-bg text-ink font-serif min-h-screen flex flex-col relative antialiased selection:bg-vermilion selection:text-paper">
+
+    <!-- Ambient Animation Canvas -->
+    <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+
+    <!-- Skip to Main Content Link for Accessibility -->
+    <a href="#main-content" class="sr-only sr-only-focusable bg-charcoal text-paper p-3 fixed top-2 left-2 z-50 font-mono text-sm underline rounded">
+        Skip to main content
+    </a>
+
+    <!-- Top Institutional Administrative Bar -->
+    <header class="bg-charcoal text-bone border-b border-charcoal sticky top-0 z-30 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center py-3 text-xs font-mono">
+            
+            <!-- Bureau Title & System ID -->
+            <div class="flex items-center gap-3">
+                <span class="inline-block w-2.5 h-2.5 bg-vermilion rounded-full animate-pulse" title="System Active"></span>
+                <span class="tracking-widest uppercase font-bold text-bone">CLASSIFICATION BUREAU // EXP-2026</span>
+                <span class="hidden md:inline text-gray-400">| RECORD ID: [EXP-0092-B]</span>
+            </div>
+
+            <!-- Global Controls & Ambient Motion Toggles -->
+            <div class="flex items-center gap-4 mt-2 sm:mt-0">
+                <div class="flex items-center gap-2 bg-black/40 px-2 py-1 rounded border border-gray-700">
+                    <label for="ambient-selector" class="text-gray-300 text-[10px] uppercase tracking-wider">Ambient:</label>
+                    <select id="ambient-selector" class="bg-charcoal text-bone text-xs border border-gray-600 rounded px-1 py-0.5 focus:outline-none focus:border-vermilion">
+                        <option value="motes">Dust Motes (Default)</option>
+                        <option value="eye">Closed Eye (Blinking)</option>
+                        <option value="off">Off / Static</option>
+                    </select>
+                </div>
+
+                <button id="toggle-readme" class="hover:text-vermilion transition-colors underline flex items-center gap-1">
+                    <span>📋 Tech Guide / README</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Global Navigation Bar -->
+        <nav class="bg-ink border-t border-gray-800 text-bone px-4 sm:px-8 py-2.5" aria-label="Main Navigation">
+            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+                <button onclick="navigateTo('landing')" class="font-bold text-lg tracking-wider font-serif hover:text-gray-300 transition-colors flex items-center gap-2">
+                    <span class="text-vermilion font-mono text-sm">§</span> THE CRIME OF BEING
+                </button>
+
+                <ul class="flex flex-wrap items-center gap-1 sm:gap-2 text-xs font-mono">
+                    <li>
+                        <button onclick="navigateTo('landing')" data-page="landing" class="nav-btn px-3 py-1.5 rounded hover:bg-gray-800 transition-colors uppercase tracking-wider">
+                            00 — Index
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="navigateTo('fiction')" data-page="fiction" class="nav-btn px-3 py-1.5 rounded hover:bg-gray-800 transition-colors uppercase tracking-wider">
+                            01 — Fiction
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="navigateTo('nonfiction')" data-page="nonfiction" class="nav-btn px-3 py-1.5 rounded hover:bg-gray-800 transition-colors uppercase tracking-wider">
+                            02 — Nonfiction
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="navigateTo('poetry')" data-page="poetry" class="nav-btn px-3 py-1.5 rounded hover:bg-gray-800 transition-colors uppercase tracking-wider">
+                            03 — Poetry
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="navigateTo('workshop')" data-page="workshop" class="nav-btn px-3 py-1.5 rounded hover:bg-gray-800 transition-colors uppercase tracking-wider">
+                            04 — Workshop
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="navigateTo('references')" data-page="references" class="nav-btn px-3 py-1.5 rounded hover:bg-gray-800 transition-colors uppercase tracking-wider">
+                            05 — References
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main id="main-content" class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ========================================== -->
+        <!-- DESTINATION 00: LANDING PAGE -->
+        <!-- ========================================== -->
+        <section id="page-landing" class="page-view space-y-12 py-6">
+            <!-- Institutional Header Block -->
+            <div class="border-2 border-charcoal p-6 sm:p-10 bg-paper/90 relative shadow-sm">
+                <div class="flex flex-wrap justify-between items-start gap-4 mb-6 border-b border-charcoal/30 pb-4 font-mono text-xs text-charcoal/70">
+                    <div>
+                        <p>FORM 109-A: EXISTENCE INQUIRY DOCKET</p>
+                        <p>JURISDICTION: GENERAL CLASSIFICATION</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="stamp-mark">EVALUATION IN PROGRESS</span>
+                    </div>
+                </div>
+
+                <div class="space-y-6 max-w-3xl">
+                    <h1 class="text-3xl sm:text-5xl font-normal tracking-tight text-charcoal uppercase border-b-2 border-charcoal pb-4">
+                        THE CRIME OF BEING
+                    </h1>
+
+                    <!-- Central Question Display -->
+                    <div class="p-6 bg-bone/70 border-l-4 border-vermilion my-6">
+                        <p class="font-mono text-xs uppercase tracking-widest text-vermilion mb-1">[CORE INQUIRY / CENTRAL QUESTION]</p>
+                        <blockquote class="text-2xl sm:text-3xl italic font-serif text-charcoal">
+                            “Do we have to earn the right to exist?”
+                        </blockquote>
+                    </div>
+
+                    <!-- Short Editable Project Description Placeholder -->
+                    <div class="text-base sm:text-lg leading-relaxed text-charcoal/90 space-y-3 font-serif">
+                        <p class="editable-placeholder">
+                            [YOUR EDITABLE PROJECT DESCRIPTION PLACEHOLDER HERE: Insert a concise, overall project overview here describing your academic focus, framing concept, or portfolio scope without fabricating interpretive claims.]
+                        </p>
+                    </div>
+
+                    <!-- Visual Focal Point / Institutional Specimen Graphic -->
+                    <div class="my-8 p-4 border border-charcoal/20 bg-bone/30 flex flex-col items-center justify-center text-center">
+                        <svg class="w-24 h-24 text-charcoal/60 my-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span class="font-mono text-xs text-charcoal/60 uppercase tracking-widest">[SPECIMEN RECORD ARCHIVE #001]</span>
+                    </div>
+
+                    <!-- Clear Action Callout -->
+                    <div class="pt-4 flex flex-wrap gap-4 items-center">
+                        <button onclick="navigateTo('fiction')" class="bg-charcoal text-bone hover:bg-vermilion transition-colors px-6 py-3 font-mono text-sm tracking-widest uppercase flex items-center gap-2 rounded-none">
+                            ENTER THE RECORD &rarr;
+                        </button>
+                        <span class="font-mono text-xs text-charcoal/60">Select any dossier from the register below.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complete Index of Destinations -->
+            <div class="border border-charcoal/30 bg-bone/40 p-6 sm:p-8">
+                <h2 class="font-mono text-xs uppercase tracking-widest text-charcoal/70 border-b border-charcoal/20 pb-2 mb-6">
+                    INDEX OF DOSSIERS & EXHIBITS
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 01 Fiction -->
+                    <div onclick="navigateTo('fiction')" class="p-4 bg-paper border border-charcoal/20 hover:border-vermilion transition-all cursor-pointer group">
+                        <div class="font-mono text-xs text-vermilion mb-1">01 — FICTION</div>
+                        <h3 class="text-xl font-serif font-bold text-charcoal group-hover:text-vermilion transition-colors">
+                            The Winged Donkey
+                        </h3>
+                        <p class="font-mono text-xs text-charcoal/70 mt-2">
+                            [YOUR FICTION TITLE HERE]
+                        </p>
+                    </div>
+
+                    <!-- 02 Nonfiction -->
+                    <div onclick="navigateTo('nonfiction')" class="p-4 bg-paper border border-charcoal/20 hover:border-vermilion transition-all cursor-pointer group">
+                        <div class="font-mono text-xs text-vermilion mb-1">02 — NONFICTION</div>
+                        <h3 class="text-xl font-serif font-bold text-charcoal group-hover:text-vermilion transition-colors">
+                            Travelogue to Nowhere
+                        </h3>
+                        <p class="font-mono text-xs text-charcoal/70 mt-2">
+                            [YOUR NONFICTION TITLE HERE]
+                        </p>
+                    </div>
+
+                    <!-- 03 Poetry -->
+                    <div onclick="navigateTo('poetry')" class="p-4 bg-paper border border-charcoal/20 hover:border-vermilion transition-all cursor-pointer group">
+                        <div class="font-mono text-xs text-vermilion mb-1">03 — POETRY</div>
+                        <h3 class="text-xl font-serif font-bold text-charcoal group-hover:text-vermilion transition-colors">
+                            Jack of All Trades, Master of None
+                        </h3>
+                        <p class="font-mono text-xs text-charcoal/70 mt-2">
+                            [YOUR POEM TITLE HERE]
+                        </p>
+                    </div>
+
+                    <!-- 04 Workshop -->
+                    <div onclick="navigateTo('workshop')" class="p-4 bg-paper border border-charcoal/20 hover:border-vermilion transition-all cursor-pointer group">
+                        <div class="font-mono text-xs text-vermilion mb-1">04 — WORKSHOP</div>
+                        <h3 class="text-xl font-serif font-bold text-charcoal group-hover:text-vermilion transition-colors">
+                            Process & Evidence
+                        </h3>
+                        <p class="font-mono text-xs text-charcoal/70 mt-2">
+                            Google Docs Evidence Links
+                        </p>
+                    </div>
+
+                    <!-- 05 References -->
+                    <div onclick="navigateTo('references')" class="p-4 bg-paper border border-charcoal/20 hover:border-vermilion transition-all cursor-pointer group">
+                        <div class="font-mono text-xs text-vermilion mb-1">05 — REFERENCES</div>
+                        <h3 class="text-xl font-serif font-bold text-charcoal group-hover:text-vermilion transition-colors">
+                            Documentation
+                        </h3>
+                        <p class="font-mono text-xs text-charcoal/70 mt-2">
+                            Sources & Citations
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Understated Author / Project Metadata -->
+            <div class="font-mono text-xs text-charcoal/60 border-t border-charcoal/20 pt-4 flex flex-wrap justify-between gap-2">
+                <div>AUTHOR: [YOUR NAME / CANDIDATE ID HERE]</div>
+                <div>INSTITUTION: [YOUR INSTITUTION / COURSE HERE]</div>
+                <div>DATE: [DATE OF SUBMISSION]</div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- DESTINATION 01: FICTION — The Winged Donkey -->
+        <!-- ========================================== -->
+        <section id="page-fiction" class="page-view hidden space-y-8">
+            <!-- Header & Catalogue Metadata -->
+            <div class="border-b border-charcoal pb-4">
+                <div class="flex justify-between items-center font-mono text-xs text-vermilion uppercase mb-1">
+                    <span>DOSSIER 01 // FICTION</span>
+                    <span>STATUS: EDITABLE PLACEHOLDER</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-serif text-charcoal">
+                    [YOUR FICTION TITLE HERE]
+                </h1>
+                <p class="font-mono text-xs text-charcoal/60 mt-1">
+                    Sub-heading: The Winged Donkey
+                </p>
+            </div>
+
+            <!-- Multimodal Control Panel (Audio / Visuals) -->
+            <div class="bg-bone/80 p-4 border border-charcoal/20 font-mono text-xs space-y-3">
+                <div class="flex items-center justify-between border-b border-charcoal/10 pb-2">
+                    <span class="font-bold text-charcoal uppercase">Multimodal Integration Engine</span>
+                    <span class="text-charcoal/60">[AURAL & VISUAL CAPABILITIES]</span>
+                </div>
+
+                <!-- Aural capability player -->
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <span class="font-semibold text-charcoal">Aural Track:</span>
+                    <audio controls class="h-8 w-full sm:w-auto">
+                        <source src="[YOUR AUDIO FILE PATH HERE]" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <span class="text-charcoal/60 text-[11px]">Path: [YOUR AUDIO FILE PATH HERE]</span>
+                </div>
+
+                <!-- Editorial Rationale Placeholder -->
+                <div class="pt-2 text-charcoal/80 border-t border-charcoal/10">
+                    <span class="font-bold">Multimodal Rationale:</span>
+                    <p class="editable-placeholder my-1">
+                        [YOUR OWN MULTIMODAL DESIGN RATIONALE HERE: Explain your technical/artistic rationale for pairing audio, visuals, or motion with this work.]
+                    </p>
+                </div>
+            </div>
+
+            <!-- Long-form Reading Column -->
+            <article class="bg-paper p-6 sm:p-12 border border-charcoal/20 shadow-sm max-w-3xl mx-auto space-y-6 text-lg leading-relaxed text-charcoal font-serif">
+                
+                <div class="editable-placeholder min-h-[300px] whitespace-pre-wrap">
+[YOUR FICTION WORK HERE]
+
+Instructions: Paste your fiction manuscript here. You can include paragraphs, dialogue, break lines, and marginal annotations. The text remains fully accessible, selectable, and uninhibited by decorative overlays.
+                </div>
+
+                <!-- Feather Effect Trigger Marker -->
+                <div id="feather-trigger-zone" class="my-12 p-4 border-y border-dashed border-charcoal/30 bg-bone/30 text-center font-mono text-xs">
+                    <p class="text-vermilion font-bold">[TECHNICAL AFFORDANCE: END-OF-WORK TRIGGER]</p>
+                    <p class="text-charcoal/70 my-1">Reaching this point in the reading triggers the optional subtle falling-feather CSS animation.</p>
+                    <button onclick="triggerFeatherEffect()" class="mt-2 bg-charcoal text-bone px-3 py-1 hover:bg-vermilion transition-colors">
+                        Manually Test Feather Animation
+                    </button>
+                </div>
+
+                <div class="editable-placeholder">
+[YOUR FICTION CONCLUSION / ENDING PORTION HERE]
+                </div>
+            </article>
+
+            <!-- Bottom Work Navigation -->
+            <div class="flex justify-between items-center font-mono text-xs border-t border-charcoal/20 pt-4">
+                <button onclick="navigateTo('landing')" class="hover:text-vermilion underline">&larr; Return to Index</button>
+                <button onclick="navigateTo('nonfiction')" class="hover:text-vermilion underline">Next: 02 Nonfiction &rarr;</button>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- DESTINATION 02: NONFICTION — Travelogue to Nowhere -->
+        <!-- ========================================== -->
+        <section id="page-nonfiction" class="page-view hidden space-y-8">
+            <!-- Header -->
+            <div class="border-b border-charcoal pb-4">
+                <div class="flex justify-between items-center font-mono text-xs text-vermilion uppercase mb-1">
+                    <span>DOSSIER 02 // NONFICTION</span>
+                    <span>STATUS: EDITABLE PLACEHOLDER</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-serif text-charcoal">
+                    [YOUR NONFICTION TITLE HERE]
+                </h1>
+                <p class="font-mono text-xs text-charcoal/60 mt-1">
+                    Sub-heading: Travelogue to Nowhere
+                </p>
+            </div>
+
+            <!-- Route-Line Interactive Visual Component -->
+            <div class="bg-bone/80 p-6 border border-charcoal/20 space-y-4">
+                <div class="flex justify-between items-center font-mono text-xs border-b border-charcoal/20 pb-2">
+                    <span class="font-bold text-charcoal">SPATIAL / ROUTE MARKER COMPONENT</span>
+                    <span class="text-charcoal/60">[CONFIGURABLE JOURNEY TRACK]</span>
+                </div>
+                
+                <p class="font-mono text-xs text-charcoal/80">
+                    Interactive route line representation. Select nodes or adjust configuration in JS.
+                </p>
+
+                <!-- Route Line Visual Render -->
+                <div class="relative py-8 px-4 overflow-x-auto">
+                    <div class="min-w-[500px]">
+                        <!-- Main Path Line -->
+                        <div class="absolute top-1/2 left-8 right-8 h-0.5 bg-charcoal/40 -translate-y-1/2"></div>
+                        
+                        <!-- Route Nodes -->
+                        <div class="relative flex justify-between items-center z-10 font-mono text-xs">
+                            <div class="flex flex-col items-center group cursor-pointer" onclick="alert('Route Stop 1: Departure')">
+                                <div class="w-5 h-5 rounded-full bg-charcoal text-paper flex items-center justify-center font-bold text-[10px] route-node">1</div>
+                                <span class="mt-2 text-[11px]">Stop A: Start</span>
+                            </div>
+                            <div class="flex flex-col items-center group cursor-pointer" onclick="alert('Route Stop 2: In-Between')">
+                                <div class="w-5 h-5 rounded-full bg-vermilion text-paper flex items-center justify-center font-bold text-[10px] route-node">2</div>
+                                <span class="mt-2 text-[11px] text-vermilion">Stop B: Unmarked</span>
+                            </div>
+                            <div class="flex flex-col items-center group cursor-pointer" onclick="alert('Route Stop 3: Deviation')">
+                                <div class="w-5 h-5 rounded-full bg-charcoal text-paper flex items-center justify-center font-bold text-[10px] route-node">3</div>
+                                <span class="mt-2 text-[11px]">Stop C: Transit</span>
+                            </div>
+                            <div class="flex flex-col items-center group cursor-pointer" onclick="alert('Route Stop 4: Terminal')">
+                                <div class="w-5 h-5 rounded-full border-2 border-dashed border-charcoal bg-paper text-charcoal flex items-center justify-center font-bold text-[10px] route-node">4</div>
+                                <span class="mt-2 text-[11px] text-charcoal/60">Stop D: Nowhere</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Work Container -->
+            <article class="bg-paper p-6 sm:p-12 border border-charcoal/20 shadow-sm max-w-3xl mx-auto space-y-6 text-lg leading-relaxed text-charcoal font-serif">
+                <div class="editable-placeholder min-h-[300px] whitespace-pre-wrap">
+[YOUR NONFICTION WORK HERE]
+
+Instructions: Insert your essay, travelogue, commentary, or creative nonfiction manuscript here. You can configure route points alongside specific paragraphs or keep the route component at the top as an index.
+                </div>
+
+                <div class="pt-6 border-t border-charcoal/10 font-mono text-xs">
+                    <span class="font-bold text-charcoal">Design Rationale:</span>
+                    <div class="editable-placeholder mt-1">
+                        [YOUR OWN MULTIMODAL DESIGN RATIONALE HERE]
+                    </div>
+                </div>
+            </article>
+
+            <!-- Bottom Work Navigation -->
+            <div class="flex justify-between items-center font-mono text-xs border-t border-charcoal/20 pt-4">
+                <button onclick="navigateTo('fiction')" class="hover:text-vermilion underline">&larr; Previous: 01 Fiction</button>
+                <button onclick="navigateTo('poetry')" class="hover:text-vermilion underline">Next: 03 Poetry &rarr;</button>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- DESTINATION 03: POETRY — Jack of All Trades, Master of None -->
+        <!-- ========================================== -->
+        <section id="page-poetry" class="page-view hidden space-y-8">
+            <!-- Header -->
+            <div class="border-b border-charcoal pb-4">
+                <div class="flex justify-between items-center font-mono text-xs text-vermilion uppercase mb-1">
+                    <span>DOSSIER 03 // POETRY</span>
+                    <span>STATUS: EDITABLE PLACEHOLDER</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-serif text-charcoal">
+                    [YOUR POEM TITLE HERE]
+                </h1>
+                <p class="font-mono text-xs text-charcoal/60 mt-1">
+                    Sub-heading: Jack of All Trades, Master of None
+                </p>
+            </div>
+
+            <!-- Typographic Layout Controls -->
+            <div class="bg-bone/80 p-4 border border-charcoal/20 font-mono text-xs flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <span class="font-bold">LAYOUT ENGINE:</span> Precise Lineation & Stanza Formatting
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="setPoetryAlignment('left')" class="px-2 py-1 bg-charcoal text-paper rounded hover:bg-vermilion">Left</button>
+                    <button onclick="setPoetryAlignment('center')" class="px-2 py-1 bg-charcoal text-paper rounded hover:bg-vermilion">Center</button>
+                    <button onclick="setPoetryAlignment('indent')" class="px-2 py-1 bg-charcoal text-paper rounded hover:bg-vermilion">Experimental Indent</button>
+                </div>
+            </div>
+
+            <!-- Poem Typography Container -->
+            <article class="bg-paper p-8 sm:p-16 border border-charcoal/20 shadow-sm max-w-2xl mx-auto space-y-6">
+                <div id="poetry-container" class="font-serif text-xl leading-loose text-charcoal space-y-6 editable-placeholder whitespace-pre-wrap">
+[YOUR POEM HERE]
+
+Example lineation layout:
+Line one of the stanza appears here,
+    Indented line follows precisely,
+        A third line suspended in whitespace.
+
+[YOUR POEM CONTINUATION]
+                </div>
+
+                <div class="pt-8 border-t border-charcoal/10 font-mono text-xs text-charcoal/80">
+                    <span class="font-bold">Poetic Rationale Placeholder:</span>
+                    <div class="editable-placeholder mt-2">
+                        [YOUR OWN MULTIMODAL DESIGN RATIONALE HERE]
+                    </div>
+                </div>
+            </article>
+
+            <!-- Bottom Work Navigation -->
+            <div class="flex justify-between items-center font-mono text-xs border-t border-charcoal/20 pt-4">
+                <button onclick="navigateTo('nonfiction')" class="hover:text-vermilion underline">&larr; Previous: 02 Nonfiction</button>
+                <button onclick="navigateTo('workshop')" class="hover:text-vermilion underline">Next: 04 Workshop &rarr;</button>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- DESTINATION 04: WORKSHOP PAGE -->
+        <!-- ========================================== -->
+        <section id="page-workshop" class="page-view hidden space-y-8">
+            <!-- Header -->
+            <div class="border-b border-charcoal pb-4">
+                <div class="flex justify-between items-center font-mono text-xs text-vermilion uppercase mb-1">
+                    <span>DOSSIER 04 // WORKSHOP & EVIDENCE</span>
+                    <span>EXTERNAL ACADEMIC DOCUMENTS</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-serif text-charcoal">
+                    Process, Revisions & Reflective Evidence
+                </h1>
+                <p class="font-mono text-xs text-charcoal/60 mt-1">
+                    Direct repository for linked external Google Docs documentation.
+                </p>
+            </div>
+
+            <!-- Google Docs External Links Register -->
+            <div class="space-y-4 font-mono text-xs">
+                
+                <!-- Item 1: Creative Process -->
+                <div class="p-4 bg-paper border border-charcoal/20 flex flex-col sm:flex-row justify-between sm:items-center gap-4 hover:border-vermilion transition-colors">
+                    <div>
+                        <span class="font-bold text-sm text-charcoal block">01. CREATIVE PROCESS DOCUMENT</span>
+                        <p class="text-charcoal/70 mt-1">Primary outline, initial brain-mapping, and conceptual development logs.</p>
+                    </div>
+                    <a href="https://docs.google.com" target="_blank" rel="noopener noreferrer" class="bg-charcoal text-bone hover:bg-vermilion px-4 py-2 uppercase tracking-wider text-center flex items-center gap-2 self-start sm:self-auto">
+                        <span>[YOUR CREATIVE PROCESS DOCUMENT LINK HERE]</span>
+                        <span>↗</span>
+                    </a>
+                </div>
+
+                <!-- Item 2: Drafts & Revision Evidence -->
+                <div class="p-4 bg-paper border border-charcoal/20 flex flex-col sm:flex-row justify-between sm:items-center gap-4 hover:border-vermilion transition-colors">
+                    <div>
+                        <span class="font-bold text-sm text-charcoal block">02. DRAFTS AND REVISION EVIDENCE</span>
+                        <p class="text-charcoal/70 mt-1">Comparative draft iterations, peer review edits, and structural changes.</p>
+                    </div>
+                    <a href="https://docs.google.com" target="_blank" rel="noopener noreferrer" class="bg-charcoal text-bone hover:bg-vermilion px-4 py-2 uppercase tracking-wider text-center flex items-center gap-2 self-start sm:self-auto">
+                        <span>[YOUR DRAFTS AND REVISION EVIDENCE LINK HERE]</span>
+                        <span>↗</span>
+                    </a>
+                </div>
+
+                <!-- Item 3: Multimodal Design Rationale -->
+                <div class="p-4 bg-paper border border-charcoal/20 flex flex-col sm:flex-row justify-between sm:items-center gap-4 hover:border-vermilion transition-colors">
+                    <div>
+                        <span class="font-bold text-sm text-charcoal block">03. MULTIMODAL DESIGN RATIONALE</span>
+                        <p class="text-charcoal/70 mt-1">Technical justification for audio, visual assets, and interaction design decisions.</p>
+                    </div>
+                    <a href="https://docs.google.com" target="_blank" rel="noopener noreferrer" class="bg-charcoal text-bone hover:bg-vermilion px-4 py-2 uppercase tracking-wider text-center flex items-center gap-2 self-start sm:self-auto">
+                        <span>[YOUR MULTIMODAL DESIGN RATIONALE LINK HERE]</span>
+                        <span>↗</span>
+                    </a>
+                </div>
+
+                <!-- Item 4: Ethical Considerations -->
+                <div class="p-4 bg-paper border border-charcoal/20 flex flex-col sm:flex-row justify-between sm:items-center gap-4 hover:border-vermilion transition-colors">
+                    <div>
+                        <span class="font-bold text-sm text-charcoal block">04. ETHICAL CONSIDERATIONS DOCUMENT</span>
+                        <p class="text-charcoal/70 mt-1">Ethical framework, representation statements, and research compliance notes.</p>
+                    </div>
+                    <a href="https://docs.google.com" target="_blank" rel="noopener noreferrer" class="bg-charcoal text-bone hover:bg-vermilion px-4 py-2 uppercase tracking-wider text-center flex items-center gap-2 self-start sm:self-auto">
+                        <span>[YOUR ETHICAL CONSIDERATIONS DOCUMENT LINK HERE]</span>
+                        <span>↗</span>
+                    </a>
+                </div>
+
+                <!-- Item 5: Reflective Commentary -->
+                <div class="p-4 bg-paper border border-charcoal/20 flex flex-col sm:flex-row justify-between sm:items-center gap-4 hover:border-vermilion transition-colors">
+                    <div>
+                        <span class="font-bold text-sm text-charcoal block">05. REFLECTIVE COMMENTARY DOCUMENT</span>
+                        <p class="text-charcoal/70 mt-1">Evaluative synthesis connecting creative work to central institutional theme.</p>
+                    </div>
+                    <a href="https://docs.google.com" target="_blank" rel="noopener noreferrer" class="bg-charcoal text-bone hover:bg-vermilion px-4 py-2 uppercase tracking-wider text-center flex items-center gap-2 self-start sm:self-auto">
+                        <span>[YOUR REFLECTIVE COMMENTARY DOCUMENT LINK HERE]</span>
+                        <span>↗</span>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Bottom Work Navigation -->
+            <div class="flex justify-between items-center font-mono text-xs border-t border-charcoal/20 pt-4">
+                <button onclick="navigateTo('poetry')" class="hover:text-vermilion underline">&larr; Previous: 03 Poetry</button>
+                <button onclick="navigateTo('references')" class="hover:text-vermilion underline">Next: 05 References &rarr;</button>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- DESTINATION 05: REFERENCES PAGE -->
+        <!-- ========================================== -->
+        <section id="page-references" class="page-view hidden space-y-8">
+            <!-- Header -->
+            <div class="border-b border-charcoal pb-4">
+                <div class="flex justify-between items-center font-mono text-xs text-vermilion uppercase mb-1">
+                    <span>DOSSIER 05 // CITATIONS & SOURCES</span>
+                    <span>BIBLIOGRAPHY REGISTER</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-serif text-charcoal">
+                    Academic & Creative Source Documentation
+                </h1>
+                <p class="font-mono text-xs text-charcoal/60 mt-1">
+                    Formal citations, external references, and asset acknowledgments.
+                </p>
+            </div>
+
+            <!-- Complete Reference Document Link Placeholder -->
+            <div class="p-6 bg-bone border-2 border-charcoal flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs">
+                <div>
+                    <span class="font-bold text-sm text-charcoal block uppercase">MASTER REFERENCE LIST</span>
+                    <p class="text-charcoal/70 mt-1">Complete formatted citations list stored in Google Docs.</p>
+                </div>
+                <a href="https://docs.google.com" target="_blank" rel="noopener noreferrer" class="bg-vermilion text-paper hover:bg-charcoal px-6 py-3 uppercase tracking-wider text-center font-bold">
+                    [YOUR REFERENCE LIST DOCUMENT LINK HERE] ↗
+                </a>
+            </div>
+
+            <!-- Structured On-Page Categorized References -->
+            <div class="space-y-6 font-mono text-xs">
+                
+                <div class="p-6 bg-paper border border-charcoal/20 space-y-3">
+                    <h2 class="font-bold text-sm text-charcoal border-b border-charcoal/20 pb-2">1. ACADEMIC & CRITICAL SOURCES</h2>
+                    <ul class="list-disc list-inside space-y-2 text-charcoal/80 font-mono">
+                        <li class="editable-placeholder">[YOUR ACADEMIC CITATION PLACEHOLDER 1]</li>
+                        <li class="editable-placeholder">[YOUR ACADEMIC CITATION PLACEHOLDER 2]</li>
+                    </ul>
+                </div>
+
+                <div class="p-6 bg-paper border border-charcoal/20 space-y-3">
+                    <h2 class="font-bold text-sm text-charcoal border-b border-charcoal/20 pb-2">2. LITERARY & INSPIRATIONAL INFLUENCES</h2>
+                    <ul class="list-disc list-inside space-y-2 text-charcoal/80 font-mono">
+                        <li class="editable-placeholder">[YOUR LITERARY INFLUENCE PLACEHOLDER 1]</li>
+                    </ul>
+                </div>
+
+                <div class="p-6 bg-paper border border-charcoal/20 space-y-3">
+                    <h2 class="font-bold text-sm text-charcoal border-b border-charcoal/20 pb-2">3. MEDIA & ASSET ATTRIBUTIONS (AUDIO/VISUAL)</h2>
+                    <ul class="list-disc list-inside space-y-2 text-charcoal/80 font-mono">
+                        <li class="editable-placeholder">[YOUR AUDIO ASSET CREDIT PLACEHOLDER]</li>
+                        <li class="editable-placeholder">[YOUR IMAGE ASSET PATH & CREDIT PLACEHOLDER]</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Bottom Work Navigation -->
+            <div class="flex justify-between items-center font-mono text-xs border-t border-charcoal/20 pt-4">
+                <button onclick="navigateTo('workshop')" class="hover:text-vermilion underline">&larr; Previous: 04 Workshop</button>
+                <button onclick="navigateTo('landing')" class="hover:text-vermilion underline">Return to Index &rarr;</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- INLINE README & TECHNICAL MANUAL OVERLAY -->
+    <div id="readme-modal" class="fixed inset-0 bg-charcoal/80 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-paper border-2 border-charcoal max-w-4xl w-full max-h-[85vh] overflow-y-auto p-6 sm:p-8 space-y-6 font-mono text-xs">
+            <div class="flex justify-between items-center border-b border-charcoal pb-4">
+                <h2 class="text-base font-bold text-charcoal uppercase">README.md — TECHNICAL & MAINTENANCE MANUAL</h2>
+                <button onclick="toggleReadme()" class="text-vermilion hover:text-charcoal font-bold text-lg">✕ CLOSE</button>
+            </div>
+
+            <div class="space-y-4 text-charcoal/90 leading-relaxed font-sans text-xs">
+                <h3 class="font-bold font-mono text-sm border-b pb-1">1. Project File Structure</h3>
+                <pre class="bg-bone p-3 font-mono text-[11px] overflow-x-auto">
+the-crime-of-being/
+│── index.html              # Complete Single-File Deliverable (Canvas compiled)
+│── pages/                  # Static subpage structure for decoupled setup
+│   ├── fiction.html
+│   ├── nonfiction.html
+│   ├── poetry.html
+│   ├── workshop.html
+│   └── references.html
+│── css/
+│   ├── variables.css
+│   └── base.css
+│── js/
+│   ├── main.js
+│   ├── motion.js
+│   └── audio.js
+└── README.md
+                </pre>
+
+                <h3 class="font-bold font-mono text-sm border-b pb-1">2. How to Replace Literary Placeholders</h3>
+                <p>Search for exact placeholder bracket strings in `index.html` (e.g. <code>[YOUR FICTION WORK HERE]</code>) and replace the text inside the containers with your prose or poetry. Paragraph breaks and whitespace will be preserved.</p>
+
+                <h3 class="font-bold font-mono text-sm border-b pb-1">3. How to Add Google Docs URLs</h3>
+                <p>In Destination 04 (Workshop) and Destination 05 (References), locate the <code>&lt;a href="..."&gt;</code> tags and replace the default URL with your actual shared Google Docs links.</p>
+
+                <h3 class="font-bold font-mono text-sm border-b pb-1">4. How to Switch Ambient Visual Signatures</h3>
+                <p>Use the top bar dropdown or change the JavaScript setting <code>currentAmbient = 'motes'</code> or <code>'eye'</code> inside <code>motion.js</code> / main script block.</p>
+
+                <h3 class="font-bold font-mono text-sm border-b pb-1">5. Deployment Instructions</h3>
+                <p><strong>GitHub & Netlify:</strong> Push this repository to GitHub. Link the repository to Netlify with build command left empty and publish directory set to <code>/</code>.</p>
+            </div>
+
+            <div class="pt-4 border-t border-charcoal/20 text-right">
+                <button onclick="toggleReadme()" class="bg-charcoal text-bone px-4 py-2 hover:bg-vermilion font-mono">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Institutional Footer -->
+    <footer class="bg-charcoal text-bone/60 border-t border-gray-800 py-6 px-4 mt-12 font-mono text-xs">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
+            <div>
+                <p>© THE CRIME OF BEING — ACADEMIC LITERARY E-PORTFOLIO TEMPLATE</p>
+                <p class="text-[10px] text-gray-500 mt-0.5">Designed for independent GitHub & Netlify deployment.</p>
+            </div>
+            <div class="flex gap-4 text-gray-400">
+                <button onclick="navigateTo('landing')" class="hover:text-paper">Index</button>
+                <button onclick="navigateTo('workshop')" class="hover:text-paper">Workshop</button>
+                <button onclick="navigateTo('references')" class="hover:text-paper">References</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTION & MOTION LOGIC -->
+    <script>
+        /* ==========================================================================
+           1. NAVIGATION SYSTEM
+           ========================================================================== */
+        function navigateTo(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page-view');
+            pages.forEach(page => page.classList.add('hidden'));
+
+            // Show selected page
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+            }
+
+            // Update Active Navigation State
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => {
+                if (btn.getAttribute('data-page') === pageId) {
+                    btn.classList.add('bg-vermilion', 'text-paper');
+                    btn.classList.remove('hover:bg-gray-800');
+                } else {
+                    btn.classList.remove('bg-vermilion', 'text-paper');
+                    btn.classList.add('hover:bg-gray-800');
+                }
+            });
+
+            // Scroll to top cleanly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* README Modal Toggle */
+        function toggleReadme() {
+            const modal = document.getElementById('readme-modal');
+            modal.classList.toggle('hidden');
+        }
+        document.getElementById('toggle-readme').addEventListener('click', toggleReadme);
+
+        /* ==========================================================================
+           2. AMBIENT MOTION SYSTEM (Dust Motes vs Blinking Closed Eye)
+           ========================================================================== */
+        const canvas = document.getElementById('ambient-canvas');
+        const ctx = canvas.getContext('2d');
+        let animationFrameId;
+        let ambientMode = 'motes'; // Default mode: 'motes', 'eye', or 'off'
+
+        // Check prefers-reduced-motion
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Particle Class for Dust Motes
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = -Math.random() * 0.4 - 0.1;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.y < 0 || this.x < 0 || this.x > canvas.width) {
+                    this.reset();
+                    this.y = canvas.height + 10;
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(18, 19, 20, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        const particles = Array.from({ length: prefersReducedMotion ? 0 : 25 }, () => new Particle());
+
+        // Eye Blink State
+        let eyeState = {
+            blinkProgress: 0,
+            isBlinking: false,
+            lastBlinkTime: Date.now(),
+            nextBlinkInterval: 4000
+        };
+
+        function drawBlinkingEye() {
+            const now = Date.now();
+            const centerX = canvas.width - 60;
+            const centerY = 60;
+            const eyeWidth = 24;
+
+            if (now - eyeState.lastBlinkTime > eyeState.nextBlinkInterval) {
+                eyeState.isBlinking = true;
+                eyeState.lastBlinkTime = now;
+                eyeState.nextBlinkInterval = 3000 + Math.random() * 5000;
+            }
+
+            ctx.strokeStyle = 'rgba(18, 19, 20, 0.4)';
+            ctx.lineWidth = 1.5;
+
+            // Draw Closed Arc Eye
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, eyeWidth, 0.1 * Math.PI, 0.9 * Math.PI, false);
+            ctx.stroke();
+
+            // Eyelashes
+            if (eyeState.isBlinking) {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY - 2, eyeWidth, 0.2 * Math.PI, 0.8 * Math.PI, false);
+                ctx.stroke();
+                setTimeout(() => { eyeState.isBlinking = false; }, 300);
+            }
+        }
+
+        function animateAmbient() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (ambientMode === 'motes' && !prefersReducedMotion) {
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+            } else if (ambientMode === 'eye' && !prefersReducedMotion) {
+                drawBlinkingEye();
+            }
+
+            animationFrameId = requestAnimationFrame(animateAmbient);
+        }
+
+        // Ambient Selector Handler
+        document.getElementById('ambient-selector').addEventListener('change', (e) => {
+            ambientMode = e.target.value;
+        });
+
+        /* ==========================================================================
+           3. WORK-SPECIFIC AFFORDANCES
+           ========================================================================== */
+
+        // Falling Feather Effect for Fiction
+        function triggerFeatherEffect() {
+            if (prefersReducedMotion) return;
+
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const feather = document.createElement('div');
+                    feather.className = 'feather-particle';
+                    feather.innerHTML = '🪶';
+                    feather.style.left = `${Math.random() * 80 + 10}vw`;
+                    feather.style.animationDuration = `${Math.random() * 3 + 4}s`;
+                    document.body.appendChild(feather);
+
+                    setTimeout(() => feather.remove(), 7000);
+                }, i * 400);
+            }
+        }
+
+        // Poetry Alignment Engine
+        function setPoetryAlignment(alignStyle) {
+            const container = document.getElementById('poetry-container');
+            if (alignStyle === 'left') {
+                container.style.textAlign = 'left';
+                container.style.paddingLeft = '0';
+            } else if (alignStyle === 'center') {
+                container.style.textAlign = 'center';
+                container.style.paddingLeft = '0';
+            } else if (alignStyle === 'indent') {
+                container.style.textAlign = 'left';
+                container.style.paddingLeft = '2rem';
+            }
+        }
+
+        /* Initialize App on Load */
+        window.onload = function() {
+            animateAmbient();
+            navigateTo('landing');
+        };
+    </script>
+</body>
+</html>
